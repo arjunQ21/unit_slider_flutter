@@ -26,8 +26,12 @@ iPhone Style horizontal slider in Flutter
             _currentValue = value;
         });
         },
+        backgroundColor : Colors.black,
+        indicatorColor : Colors.white,
+        lineColor : Colors.grey,
     ),
         
+
 
 Make my day by starring ⭐️ this repo.
 

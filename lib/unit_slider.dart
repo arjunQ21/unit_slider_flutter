@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class UnitSlider extends StatefulWidget {
@@ -8,6 +7,9 @@ class UnitSlider extends StatefulWidget {
   final double stepWidth;
   final double value;
   final ValueChanged<double> onChanged;
+  final Color backgroundColor;
+  final Color lineColor;
+  final Color indicatorColor;
 
   UnitSlider({
     required this.minValue,
@@ -16,6 +18,9 @@ class UnitSlider extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.stepWidth = 10,
+    this.backgroundColor = Colors.black,
+    this.indicatorColor = Colors.white,
+    this.lineColor = Colors.grey,
   })  : assert(minValue < maxValue),
         assert(steps > 0),
         // assert(stepWidth >= 1 && stepWidth <= (maxValue - minValue) / steps),
@@ -47,7 +52,7 @@ class _UnitSliderState extends State<UnitSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: widget.backgroundColor,
       height: 40,
       child: Stack(
         children: [
@@ -93,7 +98,7 @@ class _UnitSliderState extends State<UnitSlider> {
                                   child: Container(
                                     height: 20,
                                     width: 1,
-                                    color: Colors.grey,
+                                    color: widget.lineColor,
                                   ),
                                 ),
                               ),
@@ -115,7 +120,7 @@ class _UnitSliderState extends State<UnitSlider> {
               width: 2,
               height: 30,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: widget.indicatorColor,
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
