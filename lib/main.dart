@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home:  UnitSliderExample(),
+      home: UnitSliderExample(),
     );
   }
 }
@@ -48,6 +48,9 @@ class _UnitSliderExampleState extends State<UnitSliderExample> {
           minValue: 1,
           maxValue: 5,
           value: 3,
+          backgroundColor: Colors.grey.withOpacity(0.3),
+          lineColor: Colors.green,
+          indicatorColor: Colors.red,
           steps: 30,
           onChanged: (value) {
             setState(() {

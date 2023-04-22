@@ -18,13 +18,14 @@ class UnitSlider extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.stepWidth = 10,
+    super.key,
     this.backgroundColor = Colors.black,
     this.indicatorColor = Colors.white,
     this.lineColor = Colors.grey,
   })  : assert(minValue < maxValue),
-        assert(steps > 0),
-        // assert(stepWidth >= 1 && stepWidth <= (maxValue - minValue) / steps),
-        assert(value >= minValue && value <= maxValue);
+        assert(steps > 0);
+  // assert(stepWidth >= 1 && stepWidth <= (maxValue - minValue) / steps),
+  // assert(value >= minValue && value <= maxValue);
 
   @override
   _UnitSliderState createState() => _UnitSliderState();
@@ -35,22 +36,18 @@ class _UnitSliderState extends State<UnitSlider> {
 
   late BoxConstraints constraints;
 
-  ScrollController _scrollController = ScrollController();
+  late ScrollController _scrollController =
+      ScrollController(initialScrollOffset: initialScrollOffset);
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      double toScrollTo = (widget.value - widget.minValue) /
-          (widget.maxValue - widget.minValue) *
-          (widget.stepWidth * widget.steps);
-
-      _scrollController.jumpTo(toScrollTo);
-    });
-  }
+  double get initialScrollOffset =>
+      (widget.value - widget.minValue) /
+      (widget.maxValue - widget.minValue) *
+      (widget.stepWidth * widget.steps);
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "Rebuilding Unit Slider: {minValue: ${widget.minValue}, maxValue: ${widget.maxValue}, value: ${widget.value}, steps: ${widget.steps}");
     return Container(
       color: widget.backgroundColor,
       height: 40,
@@ -61,59 +58,59 @@ class _UnitSliderState extends State<UnitSlider> {
             right: 0,
             top: 0,
             bottom: 0,
-            child: Container(
-              child: LayoutBuilder(builder: (context, constraints) {
-                this.constraints = constraints;
-                return NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification is ScrollEndNotification ||
-                        notification is ScrollUpdateNotification) {
-                      double stoppedValue = notification.metrics.pixels *
-                              (widget.maxValue - widget.minValue) /
-                              (widget.stepWidth * widget.steps) +
-                          widget.minValue;
+            child: LayoutBuilder(builder: (context, constraints) {
+              this.constraints = constraints;
+              return NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollUpdateNotification) {
+                    double stoppedValue = notification.metrics.pixels *
+                            (widget.maxValue - widget.minValue) /
+                            (widget.stepWidth * widget.steps) +
+                        widget.minValue;
+                    widget.onChanged(stoppedValue);
+                  }
 
-                      widget.onChanged(stoppedValue);
-                    }
-
-                    return true;
-                  },
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          // color: Colors.red,
-                          height: 20,
-                          width: constraints.maxWidth / 2,
-                        ),
-                        Row(
-                          children: [
-                            for (int i = 0; i < widget.steps; i++)
-                              SizedBox(
-                                width: widget.stepWidth,
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    height: 20,
-                                    width: 1,
-                                    color: widget.lineColor,
-                                  ),
+                  return true;
+                },
+                child: SingleChildScrollView(
+                  // restorationId: ,
+                  physics: BouncingScrollPhysics(
+                    decelerationRate: ScrollDecelerationRate.fast,
+                  ),
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        // color: Colors.red,
+                        height: 20,
+                        width: constraints.maxWidth / 2,
+                      ),
+                      Row(
+                        children: [
+                          for (int i = 0; i < widget.steps; i++)
+                            SizedBox(
+                              width: widget.stepWidth,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  height: 20,
+                                  width: 1,
+                                  color: widget.lineColor,
                                 ),
                               ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 20,
-                          width: constraints.maxWidth / 2,
-                        ),
-                      ],
-                    ),
+                            ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                        width: constraints.maxWidth / 2,
+                      ),
+                    ],
                   ),
-                );
-              }),
-            ),
+                ),
+              );
+            }),
           ),
           Center(
             child: Container(
